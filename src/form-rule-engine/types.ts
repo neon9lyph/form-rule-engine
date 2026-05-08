@@ -1,111 +1,102 @@
-import type { FormInstance, Rule } from 'antd/es/form';
+import type { Rule } from 'antd/es/form'
 
-export type FieldName = string;
+export type FieldName = string
+export type FieldValue = unknown
+export type FormValues = Record<FieldName, FieldValue>
 
-export type FieldValue = unknown;
+export interface OptionItem {
+  label: string
+  value: string | number
+}
 
-export type FormValues = Record<string, FieldValue>;
+export interface FieldMeta {
+  visible?: boolean
+  required?: boolean
+  disabled?: boolean
+  loading?: boolean
+  options?: OptionItem[]
+  rules?: Rule[]
+}
 
-export type OptionItem = {
-  label: string;
-  value: string | number;
-};
-
-export type FieldMeta = {
-  visible?: boolean;
-  required?: boolean;
-  disabled?: boolean;
-  loading?: boolean;
-  options?: OptionItem[];
-  rules?: Rule[];
-};
-
-export type FormMeta = Record<FieldName, FieldMeta>;
+export type FormMeta = Record<FieldName, FieldMeta>
 
 export type RuleAction =
   | {
-      type: 'SET_VALUE';
-      field: FieldName;
-      value: FieldValue;
+      type: 'SET_VALUE'
+      field: FieldName
+      value: FieldValue
     }
   | {
-      type: 'CLEAR';
-      field: FieldName;
+      type: 'CLEAR'
+      field: FieldName
     }
   | {
-      type: 'SHOW';
-      field: FieldName;
+      type: 'SHOW'
+      field: FieldName
     }
   | {
-      type: 'HIDE';
-      field: FieldName;
-      clear?: boolean;
+      type: 'HIDE'
+      field: FieldName
+      clear?: boolean
     }
   | {
-      type: 'REQUIRED';
-      field: FieldName;
-      value: boolean;
-      message?: string;
+      type: 'REQUIRED'
+      field: FieldName
+      value: boolean
+      message?: string
     }
   | {
-      type: 'DISABLED';
-      field: FieldName;
-      value: boolean;
-      clear?: boolean;
+      type: 'DISABLED'
+      field: FieldName
+      value: boolean
+      clear?: boolean
     }
   | {
-      type: 'SET_OPTIONS';
-      field: FieldName;
-      options: OptionItem[];
+      type: 'SET_OPTIONS'
+      field: FieldName
+      options: OptionItem[]
     }
   | {
-      type: 'SET_LOADING';
-      field: FieldName;
-      value: boolean;
+      type: 'SET_LOADING'
+      field: FieldName
+      value: boolean
     }
   | {
-      type: 'SET_RULES';
-      field: FieldName;
-      rules: Rule[];
+      type: 'SET_RULES'
+      field: FieldName
+      rules: Rule[]
     }
   | {
-      type: 'VALIDATE';
-      fields?: FieldName[];
-    };
+      type: 'VALIDATE'
+      fields?: FieldName[]
+    }
 
-export type Dispatch = (action: RuleAction) => void;
+export type Dispatch = (action: RuleAction) => void
 
 export type RequestFn = <T>(
   key: string,
-  fn: () => Promise<T>
-) => Promise<T | undefined>;
+  fn: () => Promise<T>,
+) => Promise<T | undefined>
 
-export type RuleContext = {
-  changedField: FieldName;
-  changedValue: FieldValue;
-  values: FormValues;
-  meta: FormMeta;
-  form: FormInstance;
-  dispatch: Dispatch;
-  request: RequestFn;
-};
+export interface FormRuleEngineForm {
+  setFieldValue: (field: FieldName, value: FieldValue) => void
+  getFieldsValue: (nameList?: true) => FormValues
+  validateFields: (fields?: FieldName[]) => Promise<unknown> | unknown
+}
 
-export type FormRule = {
-  name: string;
+export interface RuleContext {
+  changedField: FieldName
+  changedValue: FieldValue
+  values: FormValues
+  meta: FormMeta
+  form: FormRuleEngineForm
+  dispatch: Dispatch
+  request: RequestFn
+}
 
-  /**
-   * 依赖字段。
-   * 这些字段变化时，会触发当前规则。
-   */
-  deps: FieldName[];
-
-  /**
-   * 是否命中规则。
-   */
-  when?: (values: FormValues) => boolean;
-
-  /**
-   * 命中后执行的联动逻辑。
-   */
-  effect: (ctx: RuleContext) => void | Promise<void>;
-};
+export interface FormRule {
+  name: string
+  deps: FieldName[]
+  when?: (values: FormValues) => boolean
+  effect: (context: RuleContext) => void | Promise<void>
+}

@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/form-rule-engine/formruleengine.ts","./src/form-rule-engine/engine.test.ts","./src/form-rule-engine/mock-api.ts","./src/form-rule-engine/types.ts","./src/form-rule-engine/useformruleengine.ts","./src/user-profile-form/userprofileform.tsx","./src/user-profile-form/rules.ts","./vite.config.ts"],"version":"6.0.3"}

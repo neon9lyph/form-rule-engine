@@ -1,11 +1,9 @@
-import BigFormPage from "./BigFormPage";
+import UserProfileForm from './user-profile-form/UserProfileForm'
 
-function App() {
+export default function App() {
   return (
-    <>
-      <BigFormPage />
-    </>
-  );
+    <main className="app-shell">
+      <UserProfileForm />
+    </main>
+  )
 }
-
-export default App;

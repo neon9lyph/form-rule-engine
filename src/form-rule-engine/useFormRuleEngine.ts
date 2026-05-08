@@ -1,67 +1,44 @@
-import { useMemo, useRef, useState } from 'react';
-import type { FormInstance } from 'antd/es/form';
-import type { FormMeta, FormRule, FormValues } from './types';
-import { FormRuleEngine } from './FormRuleEngine';
+import { useMemo, useState } from 'react'
+import type { FormInstance } from 'antd/es/form'
+import { FormRuleEngine } from './FormRuleEngine'
+import type { FieldName, FormMeta, FormRule, FormValues } from './types'
 
-type UseFormRuleEngineOptions = {
-  form: FormInstance;
-  rules: FormRule[];
-  initialMeta?: FormMeta;
-};
+interface UseFormRuleEngineOptions {
+  form: FormInstance
+  rules: FormRule[]
+  initialMeta?: FormMeta
+}
 
 export function useFormRuleEngine(options: UseFormRuleEngineOptions) {
-  const { form, rules, initialMeta = {} } = options;
-
-  const [meta, setMeta] = useState<FormMeta>(initialMeta);
-
-  const engineRef = useRef<FormRuleEngine | null>(null);
+  const { form, initialMeta = {}, rules } = options
+  const [meta, setMeta] = useState<FormMeta>(initialMeta)
 
   const engine = useMemo(() => {
     const instance = new FormRuleEngine({
       form,
       initialMeta,
-      onMetaChange: nextMeta => {
-        setMeta({ ...nextMeta });
+      onMetaChange: (nextMeta) => {
+        setMeta({ ...nextMeta })
       },
-    });
+    })
 
-    instance.registerRules(rules);
-
-    engineRef.current = instance;
-
-    return instance;
-  }, [form]);
+    instance.registerRules(rules)
+    return instance
+  }, [form, initialMeta, rules])
 
   const handleValuesChange = async (
     changedValues: FormValues,
-    allValues: FormValues
+    allValues: FormValues,
   ) => {
-    await engine.handleValuesChange(changedValues, allValues);
-  };
+    await engine.handleValuesChange(changedValues, allValues)
+  }
 
-  const getFieldMeta = (field: string) => {
-    return meta[field] || {};
-  };
-
-  const isVisible = (field: string) => {
-    return meta[field]?.visible !== false;
-  };
-
-  const isDisabled = (field: string) => {
-    return Boolean(meta[field]?.disabled);
-  };
-
-  const getRules = (field: string) => {
-    return meta[field]?.rules || [];
-  };
-
-  const getOptions = (field: string) => {
-    return meta[field]?.options || [];
-  };
-
-  const isLoading = (field: string) => {
-    return Boolean(meta[field]?.loading);
-  };
+  const getFieldMeta = (field: FieldName) => meta[field] ?? {}
+  const isVisible = (field: FieldName) => meta[field]?.visible !== false
+  const isDisabled = (field: FieldName) => Boolean(meta[field]?.disabled)
+  const getRules = (field: FieldName) => meta[field]?.rules ?? []
+  const getOptions = (field: FieldName) => meta[field]?.options ?? []
+  const isLoading = (field: FieldName) => Boolean(meta[field]?.loading)
 
   return {
     engine,
@@ -73,5 +50,5 @@ export function useFormRuleEngine(options: UseFormRuleEngineOptions) {
     getRules,
     getOptions,
     isLoading,
-  };
+  }
 }
