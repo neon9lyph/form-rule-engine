@@ -38,7 +38,7 @@ const delay = (ms: number) =>
 
 export const userProfileApi = {
   async fetchCities(country: string): Promise<OptionItem[]> {
-    await delay(500)
+    await delay(5000)
     return cityMap[country] ?? []
   },
 
